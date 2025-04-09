@@ -62,11 +62,4 @@ export class TaskService {
     task.status = status;
     return this.taskRepository.save(task);
   }
-
-  async isValidateTask(taskId: string) {
-    return await this.taskRepository.findOne({
-      where: { id: taskId },
-      select: { id: true },
-    });
-  }
 }
