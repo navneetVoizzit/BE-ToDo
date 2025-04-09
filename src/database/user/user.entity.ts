@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { Gender } from 'src/modules/user/enums/gender.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { TaskEntity } from '../task/task.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -27,4 +28,7 @@ export class UserEntity extends BaseEntity {
     enum: Gender,
   })
   gender: Gender;
+
+  @OneToMany(() => TaskEntity, (task) => task.user)
+  tasks: TaskEntity[];
 }

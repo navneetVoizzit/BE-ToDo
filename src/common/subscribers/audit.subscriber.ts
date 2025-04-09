@@ -1,4 +1,3 @@
-import { BaseEntity } from '../entities/base.entity';
 import {
   DataSource,
   EntitySubscriberInterface,
@@ -6,6 +5,7 @@ import {
   InsertEvent,
   UpdateEvent,
 } from 'typeorm';
+import { BaseEntity } from '../entities/base.entity';
 
 @EventSubscriber()
 export class AuditSubscriber implements EntitySubscriberInterface {
