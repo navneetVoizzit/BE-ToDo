@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto, TaskResponseDto } from './DTOs';
 import { plainToInstance } from 'class-transformer';
 import { successHandler, errorHandler } from 'src/common/function';
+import { UpdateTaskStatusDto } from './DTOs/update-task-status.dto';
 
 @ApiTags('Tasks')
 @Controller({ path: 'tasks', version: '1' })
@@ -88,6 +90,29 @@ export class TaskController {
     try {
       await this.taskService.delete(id);
       return successHandler({}, 'Task deleted successfully');
+    } catch (e) {
+      errorHandler(e);
+    }
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Update task status by ID' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Task status updated successfully.',
+    type: TaskResponseDto,
+  })
+  async updateStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+  ) {
+    try {
+      const task = await this.taskService.updateStatus(
+        id,
+        updateTaskStatusDto.status,
+      );
+      return successHandler(task, 'Task status updated successfully');
     } catch (e) {
       errorHandler(e);
     }

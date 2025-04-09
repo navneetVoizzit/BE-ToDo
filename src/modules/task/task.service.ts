@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TaskEntity } from 'src/database/task/task.entity';
 import { CreateTaskDto } from './DTOs';
+import { TaskStatus } from './enums';
 
 @Injectable()
 export class TaskService {
@@ -39,10 +40,33 @@ export class TaskService {
   }
 
   async delete(id: string): Promise<void> {
-    const result = await this.taskRepository.delete(id);
-
-    if (result.affected === 0) {
+    const task = await this.taskRepository.findOne({
+      where: { id },
+    });
+    if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
+    task.deletedAt = new Date();
+    await this.taskRepository.save(task);
+  }
+
+  async updateStatus(id: string, status: TaskStatus): Promise<TaskEntity> {
+    const task = await this.taskRepository.findOne({
+      where: { id },
+    });
+    if (!task) {
+      throw new NotFoundException(
+        `Task with ID ${id} not found or already deleted`,
+      );
+    }
+    task.status = status;
+    return this.taskRepository.save(task);
+  }
+
+  async isValidateTask(taskId: string) {
+    return await this.taskRepository.findOne({
+      where: { id: taskId },
+      select: { id: true },
+    });
   }
 }
