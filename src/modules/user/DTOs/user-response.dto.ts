@@ -1,7 +1,6 @@
 // src/modules/user/dto/user-response.dto.ts
-import { Exclude, Expose } from 'class-transformer';
-import { ApiProperty, ApiResponse, ApiResponseProperty } from '@nestjs/swagger';
-import { Gender } from '../enums/gender.enum';
+import { Expose } from 'class-transformer';
+import { ApiResponseProperty } from '@nestjs/swagger';
 
 @Expose()
 export class UserResponseDto {

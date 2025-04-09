@@ -13,9 +13,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiBearerAuth,
   ApiQuery,
-  ApiHeader,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto, UserResponseDto } from './DTOs';
@@ -23,7 +21,6 @@ import { plainToInstance } from 'class-transformer';
 import { errorHandler, successHandler } from 'src/common/function';
 
 @ApiTags('Users')
-// @ApiBearerAuth('JWT-Token')
 @Controller({ path: 'users', version: '1' })
 export class UserController {
   constructor(private readonly userService: UserService) {}

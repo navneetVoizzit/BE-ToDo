@@ -8,6 +8,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { TaskPriority, TaskStatus } from '../enums';
+import { IsValidUser } from 'src/modules/user/validator';
 
 export class CreateTaskDto {
   @ApiProperty({ example: 'Finish NestJS module', required: true })
@@ -52,5 +53,6 @@ export class CreateTaskDto {
 
   @ApiProperty({ required: true })
   @IsUUID()
+  @IsValidUser()
   userId: string;
 }

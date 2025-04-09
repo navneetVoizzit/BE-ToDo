@@ -1,42 +1,95 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
+  Get,
   Param,
+  Query,
   Delete,
+  ParseUUIDPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { TaskService } from './task.service';
-import { CreateTaskDto } from './DTOs/create-task.dto';
-import { UpdateTaskDto } from './DTOs/update-task.dto';
+import { CreateTaskDto, TaskResponseDto } from './DTOs';
+import { plainToInstance } from 'class-transformer';
+import { successHandler, errorHandler } from 'src/common/function';
 
-@Controller('task')
+@ApiTags('Tasks')
+@Controller({ path: 'tasks', version: '1' })
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(createTaskDto);
+  @ApiOperation({ summary: 'Create new task' })
+  @ApiResponse({ status: 201, type: TaskResponseDto })
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    try {
+      const task = await this.taskService.create(createTaskDto);
+      const res = plainToInstance(TaskResponseDto, task, {
+        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
+      });
+      return successHandler(res, 'Task created successfully');
+    } catch (e) {
+      errorHandler(e);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.taskService.findAll();
+  @ApiOperation({ summary: 'Get all tasks' })
+  @ApiQuery({ name: 'page', required: true, type: Number })
+  @ApiQuery({ name: 'limit', required: true, type: Number })
+  @ApiResponse({ status: 200, type: [TaskResponseDto] })
+  async findAll(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    try {
+      const tasks = await this.taskService.findAll(page, limit);
+      const res = plainToInstance(TaskResponseDto, tasks, {
+        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
+      });
+      return successHandler(res, 'Tasks retrieved successfully');
+    } catch (e) {
+      errorHandler(e);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.taskService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
+  @ApiOperation({ summary: 'Get task by ID' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiResponse({ status: 200, type: TaskResponseDto })
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      const task = await this.taskService.findOne(id);
+      const res = plainToInstance(TaskResponseDto, task, {
+        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
+      });
+      return successHandler(res, 'Task retrieved successfully');
+    } catch (e) {
+      errorHandler(e);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.taskService.remove(+id);
+  @ApiOperation({ summary: 'Delete task by ID' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiResponse({ status: 200, description: 'Task deleted successfully' })
+  async delete(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      await this.taskService.delete(id);
+      return successHandler({}, 'Task deleted successfully');
+    } catch (e) {
+      errorHandler(e);
+    }
   }
 }
