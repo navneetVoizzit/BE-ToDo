@@ -1,4 +1,3 @@
-// src/modules/user/dto/user-response.dto.ts
 import { Expose } from 'class-transformer';
 import { ApiResponseProperty } from '@nestjs/swagger';
 

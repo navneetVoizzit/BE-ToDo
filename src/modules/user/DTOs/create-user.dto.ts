@@ -1,5 +1,4 @@
-// src/modules/user/dto/create-user.dto.ts
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '../enums/gender.enum';
 
@@ -49,4 +48,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEnum(Gender)
   gender: Gender;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 20, { message: 'Password must be between 6 and 20 characters' })
+  password: string;
 }
