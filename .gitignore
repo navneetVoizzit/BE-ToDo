@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+dist/
+npm-debug.log*
+
+# Build output
+build/
+.tmp/
+.cache/
+
+# Environment variables
+.env
+
+# Docker
+docker-compose.override.yml
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VSCode settings (optional)
+.vscode/
+
+
